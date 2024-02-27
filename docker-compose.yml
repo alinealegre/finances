@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: ./database/Dockerfile
+    image: finances
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: finances
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123456
+
+  finances:
+    container_name: finances
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: finances
+      DB_USER: admin
+      DB_PASSWORD: 123456
+    volumes:
+      - .:/app
+    restart: always
+    
