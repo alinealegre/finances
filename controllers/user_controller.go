@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Criar o usuário
 func CreateUser(c *gin.Context) {
 	db := database.GetDatabase()
 
@@ -23,31 +24,19 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	users := make(map[string]models.User)
-
-	if strings.HasSuffix(p.Email, "@finances.com") {
-		p.Type = "admin"
-	} else {
-		p.Type = "normal"
-	}
-
-	if _, ok := users[p.CPF]; ok {
-		c.JSON(http.StatusConflict, gin.H{"error": "Usuário já existe"})
-		return
-	}
-
 	p.Password = services.SHA256Encoder(p.Password)
 
 	err = db.Create(&p).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Não foi possível criar um usuário: " + err.Error(),
+			"error": "cannot create book: " + err.Error(),
 		})
 		return
 	}
 
 	c.Status(201)
 }
+
 func UptadeUserInfo(c *gin.Context) {
 	var p models.User
 
@@ -79,7 +68,6 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	// Marque o usuário como excluído
 	if err := db.Delete(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao excluir usuário"})
 		return

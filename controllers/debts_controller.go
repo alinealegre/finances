@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"net/http"
 	"strconv"
 
 	"finances/database"
@@ -10,34 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// eu acho que essa função quebraria o banco de dados, a menos que seja atrelada a um só cpf.
 func ShowDebtsByUser(c *gin.Context) {
 	db := database.GetDatabase()
 	var p []models.Debts
-	err := db.Find(&p).Error
+
+	cpf := c.Param("cpf")
+
+	err := db.Where("cpf = ?", cpf).Find(&p).Error
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot find product by id: " + err.Error(),
+			"error": "Não foi possível listar dívidas: " + err.Error(),
 		})
 		return
 	}
 
 	c.JSON(200, p)
-}
-
-func GetDebtsByCompany(c *gin.Context) {
-	db := database.GetDatabase()
-
-	company := c.Param("company")
-
-	var debts []models.Debts
-	if err := db.Where("company = ?", company).Find(&debts).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dívidas"})
-		return
-	}
-
-	c.JSON(http.StatusOK, debts)
 }
 
 func ShowDebt(c *gin.Context) {
@@ -57,7 +44,7 @@ func ShowDebt(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot find product by id: " + err.Error(),
+			"error": "Não foi posspivel encontrar: " + err.Error(),
 		})
 		return
 	}
@@ -75,7 +62,7 @@ func CreateDebt(c *gin.Context) {
 	err := c.ShouldBindJSON(&p)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot bind JSON: " + err.Error(),
+			"error": "Não foi possível vincular JSON:  " + err.Error(),
 		})
 		return
 	}

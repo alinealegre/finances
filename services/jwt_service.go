@@ -20,14 +20,16 @@ func NewJWTService() *jwtService {
 }
 
 type Claim struct {
-	Sum string `json:"sum"`
+	CPF  string `json:"cpf"`
+	Type string `json:"type"`
 	jwt.StandardClaims
 }
 
-func (s *jwtService) GenerateToken(cpf string) (string, error) {
+func (s *jwtService) GenerateToken(cpf, userType string) (string, error) {
 	claim := &Claim{
-		cpf,
-		jwt.StandardClaims{
+		CPF:  cpf,
+		Type: userType,
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
 			Issuer:    s.issure,
 			IssuedAt:  time.Now().Unix(),

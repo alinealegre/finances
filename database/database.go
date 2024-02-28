@@ -17,13 +17,11 @@ var db *gorm.DB
 func StartDB() {
 	str := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USER"), os.Getenv("DB_NAME"), os.Getenv("DB_PASSWORD"))
 
-	fmt.Println(str)
-
 	database, err := gorm.Open(postgres.Open(str), &gorm.Config{})
 
 	if err != nil {
-		fmt.Println("Could not connect to the Postgres Database")
-		log.Fatal("Error: ", err)
+		fmt.Println("Não foi possível conectar ao Banco de Dados Postgres")
+		log.Fatal("Erro: ", err)
 	}
 
 	db = database

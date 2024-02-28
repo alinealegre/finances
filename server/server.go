@@ -23,6 +23,6 @@ func NewServer() Server {
 func (s *Server) Run() {
 	router := routes.ConfigRoutes(s.server)
 
-	log.Printf("Server running at port: %v", s.port)
+	log.Printf("Servidor executando na porta: %v", s.port)
 	log.Fatal(router.Run(":" + s.port))
 }
