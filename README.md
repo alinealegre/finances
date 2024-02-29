@@ -30,5 +30,7 @@ To run the project, follow these steps:
 1. Ensure you have Docker installed on your system.
 2. Execute the following commands in the project directory:
 
+
 docker-compose up -d db      // To start the PostgreSQL database
+
 docker-compose up -d finances // To start the application
