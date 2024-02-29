@@ -7,21 +7,23 @@ import (
 	"gorm.io/gorm"
 )
 
-func CalculateUserScore(db *gorm.DB) float64 {
+func CalculateUserScore(db *gorm.DB) int {
 	var debts []models.Debts
 	db.Find(&debts)
 
-	if len(debts) == 0 {
-		return 0
-	}
-
 	var totalValue float64
+	totalValue = 0
 	for _, debt := range debts {
-		totalValue += float64(debt.Value)
+		totalValue += debt.Value
 	}
 
-	averageValue := totalValue / float64(len(debts))
+	var averageValue float64
+	averageValue = 0
+	if totalValue != 0 && len(debts) > 0 {
+		averageValue = float64((int(totalValue) / len(debts)))
+	}
+
 	score := 10000 / math.Sqrt(averageValue+100)
 
-	return score
+	return int(score)
 }

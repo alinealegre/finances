@@ -31,7 +31,7 @@ func Login(c *gin.Context) {
 
 	if user.Password != services.SHA256Encoder(p.Password) {
 		c.JSON(401, gin.H{
-			"error": "credenciais inválidas",
+			"error": "Credenciais inválidas",
 		})
 		return
 	}

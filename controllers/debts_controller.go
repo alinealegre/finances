@@ -27,31 +27,6 @@ func ShowDebtsByUser(c *gin.Context) {
 	c.JSON(200, p)
 }
 
-func ShowDebt(c *gin.Context) {
-	id := c.Param("id")
-	newid, err := strconv.Atoi(id)
-
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "ID precisa ser um número inteiro",
-		})
-		return
-	}
-
-	db := database.GetDatabase()
-	var p models.Debts
-	err = db.First(&p, newid).Error
-
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "Não foi posspivel encontrar: " + err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, p)
-}
-
 func CreateDebt(c *gin.Context) {
 	user := c.Request.Header.Get("Authorization")
 	println(user)

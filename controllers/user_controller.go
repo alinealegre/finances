@@ -24,34 +24,25 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	var User = make(map[string]models.User)
+	if _, ok := User[p.CPF]; ok {
+		c.JSON(http.StatusConflict, gin.H{"error": "Usuário já existe"})
+		return
+	}
+
+	p.Type = "usuario"
+	if strings.HasSuffix(p.Email, "@finances.com") {
+		p.Type = "admin"
+	}
+
 	p.Password = services.SHA256Encoder(p.Password)
 
 	err = db.Create(&p).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot create book: " + err.Error(),
+			"error": "Não foi possível criar usuário: " + err.Error(),
 		})
 		return
-	}
-
-	c.Status(201)
-}
-
-func UptadeUserInfo(c *gin.Context) {
-	var p models.User
-
-	err := c.ShouldBindJSON(&p)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "Não foi possível processar os dados enviados " + err.Error(),
-		})
-		return
-	}
-
-	if strings.HasSuffix(p.Email, "@finances.com") {
-		p.Type = "admin"
-	} else {
-		p.Type = "normal"
 	}
 
 	c.Status(201)

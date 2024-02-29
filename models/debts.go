@@ -9,7 +9,7 @@ import (
 type Debts struct {
 	Id          int            `json:"id" gorm:"primaryKey"`
 	Company     string         `json:"company"`
-	Value       float32        `json:"value"`
+	Value       float64        `json:"value"`
 	ExpiratedAt time.Time      `json:"expirated_at"`
 	CPF         string         `json:"cpf"`
 	CreatedAt   time.Time      `json:"created"`
