@@ -13,9 +13,9 @@ func ShowDebtsByUser(c *gin.Context) {
 	db := database.GetDatabase()
 	var p []models.Debts
 
-	cpf := c.Param("cpf")
+	userCpf := c.GetString("userCPF")
 
-	err := db.Where("cpf = ?", cpf).Find(&p).Error
+	err := db.Where("cpf = ?", userCpf).Find(&p).Error
 
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -28,9 +28,17 @@ func ShowDebtsByUser(c *gin.Context) {
 }
 
 func CreateDebt(c *gin.Context) {
-	user := c.Request.Header.Get("Authorization")
-	println(user)
 	db := database.GetDatabase()
+
+	userType := c.GetString("userType")
+	if userType != "admin" {
+		c.JSON(400, gin.H{
+			"error": "Usuario nao é admin",
+		})
+		return
+	}
+
+	cpf := c.Param("cpf")
 
 	var p models.Debts
 
@@ -41,6 +49,7 @@ func CreateDebt(c *gin.Context) {
 		})
 		return
 	}
+	p.CPF = cpf
 
 	err = db.Create(&p).Error
 	if err != nil {

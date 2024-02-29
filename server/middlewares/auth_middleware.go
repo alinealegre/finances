@@ -13,8 +13,14 @@ func Auth() gin.HandlerFunc {
 			c.AbortWithStatus(401)
 		}
 
-		if !services.NewJWTService().ValidateToken(token) {
+		jwtService := services.NewJWTService()
+		claims, err := jwtService.ValidateToken(token)
+		if err != nil {
 			c.AbortWithStatus(401)
+			return
 		}
+
+		c.Set("userType", claims.Type)
+		c.Set("userCPF", claims.CPF) //end point de mostrar dividas de usuario, comparar o cpf do parametro com o cpf do token
 	}
 }

@@ -14,9 +14,9 @@ import (
 func CreateUser(c *gin.Context) {
 	db := database.GetDatabase()
 
-	var p models.User
+	var user models.User
 
-	err := c.ShouldBindJSON(&p)
+	err := c.ShouldBindJSON(&user)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Não foi possível processar os dados enviados " + err.Error(),
@@ -25,19 +25,19 @@ func CreateUser(c *gin.Context) {
 	}
 
 	var User = make(map[string]models.User)
-	if _, ok := User[p.CPF]; ok {
+	if _, ok := User[user.CPF]; ok {
 		c.JSON(http.StatusConflict, gin.H{"error": "Usuário já existe"})
 		return
 	}
 
-	p.Type = "usuario"
-	if strings.HasSuffix(p.Email, "@finances.com") {
-		p.Type = "admin"
+	user.Type = "normal"
+	if strings.HasSuffix(user.Email, "@finances.com") {
+		user.Type = "admin"
 	}
 
-	p.Password = services.SHA256Encoder(p.Password)
+	user.Password = services.SHA256Encoder(user.Password)
 
-	err = db.Create(&p).Error
+	err = db.Create(&user).Error
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Não foi possível criar usuário: " + err.Error(),

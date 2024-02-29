@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -46,14 +46,19 @@ func (s *jwtService) GenerateToken(cpf, userType string) (string, error) {
 	return t, nil
 }
 
-func (s *jwtService) ValidateToken(token string) bool {
-	_, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, isValid := t.Method.(*jwt.SigningMethodHMAC); !isValid {
-			return nil, fmt.Errorf("invalid token: %v", token)
-		}
-
+func (s *jwtService) ValidateToken(tokenString string) (*Claim, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claim{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(s.secretKey), nil
 	})
 
-	return err == nil
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*Claim)
+	if !ok || !token.Valid {
+		return nil, errors.New("Token inválido")
+	}
+
+	return claims, nil
 }

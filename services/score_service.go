@@ -23,7 +23,7 @@ func CalculateUserScore(db *gorm.DB) int {
 		averageValue = float64((int(totalValue) / len(debts)))
 	}
 
-	score := 10000 / math.Sqrt(averageValue+100)
+	score := (10000 / math.Sqrt(averageValue+100))
 
 	return int(score)
 }
