@@ -8,14 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Handler para calcular o score do usuário
 func CalculateUserScoreHandler(c *gin.Context) {
-	db := database.GetDatabase() // Obtenha o objeto *gorm.DB do seu arquivo database/database.go
-	cpf := c.Param("cpf")
+	db := database.GetDatabase()
 
-	// Chame a função CalculateUserScore do pacote services para calcular o score do usuário
-	score := services.CalculateUserScore(db, cpf)
+	score := services.CalculateUserScore(db)
 
-	// Retorne o score do usuário como resposta
 	c.JSON(http.StatusOK, gin.H{"score": score})
 }

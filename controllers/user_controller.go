@@ -4,13 +4,13 @@ import (
 	"finances/database"
 	"finances/models"
 	"finances/services"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Criar o usuário
 func CreateUser(c *gin.Context) {
 	db := database.GetDatabase()
 
@@ -24,15 +24,9 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	var User = make(map[string]models.User)
-	if _, ok := User[user.CPF]; ok {
-		c.JSON(http.StatusConflict, gin.H{"error": "Usuário já existe"})
-		return
-	}
-
-	user.Type = "normal"
+	user.Type = false
 	if strings.HasSuffix(user.Email, "@finances.com") {
-		user.Type = "admin"
+		user.Type = true
 	}
 
 	user.Password = services.SHA256Encoder(user.Password)
@@ -40,12 +34,14 @@ func CreateUser(c *gin.Context) {
 	err = db.Create(&user).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Não foi possível criar usuário: " + err.Error(),
+			"error": "Não foi possível criar usuário ou este já está cadastrado: " + err.Error(),
 		})
 		return
 	}
 
-	c.Status(201)
+	c.JSON(201, gin.H{
+		"message": fmt.Sprintf("Usuário criado com sucesso"),
+	})
 }
 
 func DeleteUser(c *gin.Context) {

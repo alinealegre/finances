@@ -11,11 +11,11 @@ import (
 
 func ShowDebtsByUser(c *gin.Context) {
 	db := database.GetDatabase()
-	var p []models.Debts
+	var debts []models.Debts
 
 	userCpf := c.GetString("userCPF")
 
-	err := db.Where("cpf = ?", userCpf).Find(&p).Error
+	err := db.Where("cpf = ?", userCpf).Find(&debts).Error
 
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -24,34 +24,26 @@ func ShowDebtsByUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, p)
+	c.JSON(200, debts)
 }
 
 func CreateDebt(c *gin.Context) {
 	db := database.GetDatabase()
 
-	userType := c.GetString("userType")
-	if userType != "admin" {
-		c.JSON(400, gin.H{
-			"error": "Usuario nao é admin",
-		})
-		return
-	}
-
 	cpf := c.Param("cpf")
 
-	var p models.Debts
+	var debts models.Debts
 
-	err := c.ShouldBindJSON(&p)
+	err := c.ShouldBindJSON(&debts)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Não foi possível vincular JSON:  " + err.Error(),
 		})
 		return
 	}
-	p.CPF = cpf
+	debts.CPF = cpf
 
-	err = db.Create(&p).Error
+	err = db.Create(&debts).Error
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Não foi possível criar um usuário: " + err.Error(),
@@ -59,7 +51,7 @@ func CreateDebt(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, p)
+	c.JSON(200, debts)
 }
 
 func DeleteDebt(c *gin.Context) {
@@ -90,9 +82,9 @@ func DeleteDebt(c *gin.Context) {
 func EditDebt(c *gin.Context) {
 	db := database.GetDatabase()
 
-	var p models.Debts
+	var debts models.Debts
 
-	err := c.ShouldBindJSON(&p)
+	err := c.ShouldBindJSON(&debts)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Dívida não encontrada " + err.Error(),
@@ -100,7 +92,7 @@ func EditDebt(c *gin.Context) {
 		return
 	}
 
-	err = db.Save(&p).Error
+	err = db.Save(&debts).Error
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Não foi possível criar usuário: " + err.Error(),
@@ -108,5 +100,5 @@ func EditDebt(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, p)
+	c.JSON(200, debts)
 }

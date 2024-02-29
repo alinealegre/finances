@@ -11,6 +11,13 @@ import (
 func Login(c *gin.Context) {
 	db := database.GetDatabase()
 
+	if _, exists := c.Get("tokenClaims"); exists {
+		c.JSON(400, gin.H{
+			"error": "Usuário já está autenticado",
+		})
+		return
+	}
+
 	var p models.Login
 	err := c.ShouldBindJSON(&p)
 	if err != nil {
@@ -50,7 +57,13 @@ func Login(c *gin.Context) {
 
 }
 
+var tokenBlacklist = make(map[string]bool)
+
 func Logout(c *gin.Context) {
+
+	token := c.GetHeader("Authorization")
+	tokenBlacklist[token] = true
+
 	c.JSON(200, gin.H{
 		"message": "Logout realizado com sucesso",
 	})
