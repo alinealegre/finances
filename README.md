@@ -3,8 +3,6 @@
 This project, is a financial management system implemented in Go. It provides functionalities related to managing debts, user authentication, and user data. The project is organized into different directories, each responsible for a specific aspect of the application.
 
 
-
-
 ## Technologies Used
 The project utilizes the following technologies:
 
