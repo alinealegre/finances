@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strconv"
+	"time"
 
 	"finances/database"
 	"finances/models"
@@ -24,9 +25,24 @@ func ShowDebtsByUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, debts)
-}
+	type DebtInfo struct {
+		Value       float64   `json:"value"`
+		ExpiratedAt time.Time `json:"expirated_at"`
+		CPF         string    `json:"cpf"`
+	}
 
+	var debtsInfo []DebtInfo
+
+	for _, debt := range debts {
+		debtsInfo = append(debtsInfo, DebtInfo{
+			Value:       debt.Value,
+			ExpiratedAt: debt.ExpiratedAt,
+			CPF:         debt.CPF,
+		})
+	}
+
+	c.JSON(200, debtsInfo)
+}
 func CreateDebt(c *gin.Context) {
 	db := database.GetDatabase()
 

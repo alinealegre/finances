@@ -4,7 +4,6 @@ import (
 	"finances/database"
 	"finances/models"
 	"finances/services"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -40,7 +39,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(201, gin.H{
-		"message": fmt.Sprintf("Usuário criado com sucesso"),
+		"message": "Usuário criado com sucesso",
 	})
 }
 

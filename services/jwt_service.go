@@ -20,15 +20,17 @@ func NewJWTService() *jwtService {
 }
 
 type Claim struct {
-	CPF  string `json:"cpf"`
-	Type string `json:"type"`
+	CPF   string `json:"cpf"`
+	Type  bool   `json:"type"`
+	Email string `json:"email"`
 	jwt.StandardClaims
 }
 
-func (s *jwtService) GenerateToken(cpf, userType string) (string, error) {
+func (s *jwtService) GenerateToken(cpf string, userType bool, email string) (string, error) {
 	claim := &Claim{
-		CPF:  cpf,
-		Type: userType,
+		CPF:   cpf,
+		Type:  userType,
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
 			Issuer:    s.issure,
@@ -57,7 +59,7 @@ func (s *jwtService) ValidateToken(tokenString string) (*Claim, error) {
 
 	claims, ok := token.Claims.(*Claim)
 	if !ok || !token.Valid {
-		return nil, errors.New("Token inválido")
+		return nil, errors.New("token inválido")
 	}
 
 	return claims, nil

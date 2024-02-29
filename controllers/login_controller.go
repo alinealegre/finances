@@ -4,6 +4,7 @@ import (
 	"finances/database"
 	"finances/models"
 	"finances/services"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,7 +44,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := services.NewJWTService().GenerateToken(user.CPF, user.Type)
+	token, err := services.NewJWTService().GenerateToken(user.CPF, user.Type, user.Email)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"error": err.Error(),
@@ -57,14 +58,6 @@ func Login(c *gin.Context) {
 
 }
 
-var tokenBlacklist = make(map[string]bool)
-
 func Logout(c *gin.Context) {
-
-	token := c.GetHeader("Authorization")
-	tokenBlacklist[token] = true
-
-	c.JSON(200, gin.H{
-		"message": "Logout realizado com sucesso",
-	})
+	c.JSON(http.StatusOK, gin.H{"message": "Logout realizado com sucesso"})
 }
